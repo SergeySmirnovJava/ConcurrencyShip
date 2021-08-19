@@ -1,5 +1,6 @@
 package org.concurrency_ship;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -23,13 +24,15 @@ enum ShipType{
     CLOTHES
 }
 
-public class Ship implements Runnable {
+public class Ship implements Callable<Ship> {
     private ShipType shipType;
     private ShipCapacity shipCapacity;
     private Semaphore tunnel;
 
     public Ship(Semaphore shipTunnel){
         tunnel = shipTunnel;
+        shipCapacity = generateRandomCapacity();
+        shipType = generateRandomType();
     }
 
     public ShipType getShipType() {
@@ -56,16 +59,32 @@ public class Ship implements Runnable {
         return ShipType.values()[ThreadLocalRandom.current().nextInt(ShipType.values().length)];
     }
 
+   /* @Override
+    public Ship call() throws Exception {
+        tunnel.acquire();
+        Thread.sleep(100);
+        tunnel.release();
+        return this;
+    }*/
+
 
     @Override
-    public void run() {
+    public Ship call() {
         try {
+            if (tunnel.hasQueuedThreads()){
+                System.out.println("Waiting for free tunnel " + tunnel.getQueueLength());
+            }
             tunnel.acquire();
-            Thread.sleep(100);
+            System.out.println(Thread.currentThread().getId() +": " + this.getShipType() + " "
+                                                                    + this.getShipCapacity() + " in tunnel");
+          //  Thread.sleep(1);
             tunnel.release();
+            System.out.println(Thread.currentThread().getId() + " ready for unload");
+            return this;
         }
         catch (InterruptedException ie){
             System.out.println("Error");
+            return this;
         }
     }
 }
