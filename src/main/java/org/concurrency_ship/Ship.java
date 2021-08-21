@@ -78,7 +78,7 @@ public class Ship implements Callable<Ship> {
             System.out.println("Ships in tunnel " + tunnel.availablePermits());
             System.out.println(Thread.currentThread().getId() +": " + this.getShipType() + " "
                                                                     + this.getShipCapacity() + " in tunnel");
-          //  Thread.sleep(1);
+            Thread.sleep(1000);
             tunnel.release();
             System.out.println(Thread.currentThread().getId() + " ready for unload");
             return this;
