@@ -75,6 +75,7 @@ public class Ship implements Callable<Ship> {
                 System.out.println("Waiting for free tunnel " + tunnel.getQueueLength());
             }
             tunnel.acquire();
+            System.out.println("Ships in tunnel " + tunnel.availablePermits());
             System.out.println(Thread.currentThread().getId() +": " + this.getShipType() + " "
                                                                     + this.getShipCapacity() + " in tunnel");
           //  Thread.sleep(1);
